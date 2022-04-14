@@ -10,7 +10,7 @@ sealed trait TaskStatus
 case object InProgress extends TaskStatus
 case object Completed extends TaskStatus
 
-case class Task(uuid: UUID,
+case class Task(uuid: UUID = UUID.randomUUID(),
                 summary: String,
                 status: TaskStatus,
                 createdBy: UUID) {

@@ -27,4 +27,9 @@ INSERT INTO public."USER" ("UUID", "EMAIL", "PASSWORD")
 INSERT INTO public."USER" ("UUID", "EMAIL", "PASSWORD")
     VALUES (gen_random_uuid(), 'jane@example.com', '$2a$10$wHpkUVsyTrmR8rm0EiGXyOK7NMOGdoxhtViAVVbvUbaTtBWkON6tu');
 
+
 -- !Downs
+
+DROP TABLE IF EXISTS public."TASK";
+
+DROP TABLE IF EXISTS public."USER";

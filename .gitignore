@@ -8,3 +8,4 @@ target
 /.settings
 /RUNNING_PID
 /.postgres-data
+/.postgres-test-data

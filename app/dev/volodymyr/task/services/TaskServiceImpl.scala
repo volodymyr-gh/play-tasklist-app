@@ -19,20 +19,18 @@ class TaskServiceImpl @Inject() (taskRepository: TaskRepository)
 
   def create(createTaskDto: CreateTaskDto, createdBy: UUID): Future[Task] =
     taskRepository.insert(Task(
-      uuid = UUID.randomUUID(),
       summary = createTaskDto.summary,
       status = InProgress,
       createdBy = createdBy
     ))
 
   def complete(id: UUID, userId: UUID): Future[Task] = {
-    def onTaskFound(task: Task): Future[Task] = {
+    def onTaskFound(task: Task): Future[Task] =
       task.complete() match {
         case Success(completedTask) =>
           taskRepository.update(task, completedTask)
         case Failure(ex) => Future.failed(ex)
       }
-    }
 
     taskRepository.findByIdAndUserId(id, userId).flatMap {
       case Some(task) => onTaskFound(task)

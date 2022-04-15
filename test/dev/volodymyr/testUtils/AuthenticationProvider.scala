@@ -11,7 +11,7 @@ import java.time.Instant
 trait AuthenticationProvider {
   this: GuiceOneServerPerSuite =>
 
-  private def config: Configuration = app.injector.instanceOf[Configuration]
+  private lazy val config: Configuration = app.injector.instanceOf[Configuration]
 
   protected def buildAuthHeaders(user: FixtureUser): Seq[(String, String)] = {
     val token = buildAuthToken(user)

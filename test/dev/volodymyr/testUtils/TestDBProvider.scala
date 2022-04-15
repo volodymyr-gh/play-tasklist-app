@@ -1,19 +1,22 @@
 package dev.volodymyr.testUtils
 
+import akka.util.Timeout
 import com.github.t3hnar.bcrypt._
 import org.scalatest.{BeforeAndAfterEach, Suite}
 import org.scalatestplus.play.guice.GuiceOneServerPerSuite
 import play.api.db.DBApi
 import play.api.db.evolutions.Evolutions
 import play.api.db.slick.{DatabaseConfigProvider, HasDatabaseConfigProvider}
+import play.api.test.DefaultAwaitTimeout
 import slick.jdbc.JdbcProfile
 
 import java.util.UUID
-import scala.concurrent.{ExecutionContext, Future}
+import scala.concurrent.{Await, ExecutionContext}
 
 trait TestDBProvider
   extends HasDatabaseConfigProvider[JdbcProfile]
-    with BeforeAndAfterEach {
+    with BeforeAndAfterEach
+    with DefaultAwaitTimeout {
 
   this: Suite with GuiceOneServerPerSuite =>
 
@@ -40,14 +43,15 @@ trait TestDBProvider
 
   protected def createFixtureUser(uuid: UUID = UUID.randomUUID(),
                                   email: String = "default_user@example.com",
-                                  password: String = "default_password"): Future[FixtureUser] = {
+                                  password: String = "default_password"): FixtureUser = {
 
     val hashedPassword = password.bcryptBounded(10)
-
     val action = sqlu"""INSERT INTO public."USER" ("UUID", "EMAIL", "PASSWORD")
                         VALUES (${uuid.toString}::uuid, $email, $hashedPassword)"""
-
-    db.run(action)
-      .map(_ => FixtureUser(uuid, email, password, hashedPassword))
+    runDBAction(action)
+    FixtureUser(uuid, email, password, hashedPassword)
   }
+
+  private def runDBAction[T](action: DBIO[T])(implicit timeout: Timeout): T =
+    Await.result(db.run(action), timeout.duration)
 }

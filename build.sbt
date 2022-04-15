@@ -3,7 +3,9 @@ organization := "dev.volodymyr"
 
 version := "1.0-SNAPSHOT"
 
-lazy val root = (project in file(".")).enablePlugins(PlayScala)
+lazy val root = (project in file("."))
+  .enablePlugins(PlayScala)
+  .settings((Test / javaOptions) ++= Seq("-Dconfig.file=conf/test.conf"))
 
 scalaVersion := "2.13.8"
 
@@ -11,6 +13,7 @@ libraryDependencies += guice
 libraryDependencies += evolutions
 
 libraryDependencies += "org.scalatestplus.play" %% "scalatestplus-play" % "5.0.0" % Test
+libraryDependencies += "org.mockito" % "mockito-core" % "4.4.0" % Test
 libraryDependencies += "com.github.t3hnar" %% "scala-bcrypt" % "4.3.0"
 libraryDependencies += "com.github.jwt-scala" %% "jwt-circe" % "9.0.5"
 libraryDependencies += "com.typesafe.play" %% "play-slick" % "5.0.0"

@@ -21,7 +21,7 @@ class TaskSpec extends PlaySpec {
   }
 
   "Task completion" should {
-    "return new task with updated status" in {
+    "return a new task with updated status" in {
       val task = Task(
         summary = "do something",
         status = InProgress,

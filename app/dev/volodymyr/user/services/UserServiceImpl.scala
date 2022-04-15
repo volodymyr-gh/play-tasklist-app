@@ -2,7 +2,7 @@ package dev.volodymyr.user.services
 
 import dev.volodymyr.user.dto.{CurrentUser, LoginDto}
 import dev.volodymyr.user.entities.User
-import dev.volodymyr.user.exceptions.NotAuthenticatedException
+import dev.volodymyr.user.exceptions.InvalidCredentialsException
 import dev.volodymyr.user.repositories.UserRepository
 
 import io.circe.parser.decode
@@ -39,12 +39,12 @@ class UserServiceImpl @Inject() (userRepository: UserRepository,
 
   def login(loginDto: LoginDto): Future[String] =
     userRepository.findByEmail(loginDto.email).flatMap {
-      case None => Future.failed(new NotAuthenticatedException)
+      case None => Future.failed(new InvalidCredentialsException)
       case Some(user) =>
         if (user.isPasswordEqualTo(loginDto.password))
           Future.successful(createToken(user))
         else
-          Future.failed(new NotAuthenticatedException)
+          Future.failed(new InvalidCredentialsException)
     }
 
   private def createToken(user: User): String = {

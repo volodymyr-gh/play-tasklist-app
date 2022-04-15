@@ -1,7 +1,7 @@
 package dev.volodymyr.user.controllers
 
 import dev.volodymyr.user.dto.LoginDto
-import dev.volodymyr.user.exceptions.NotAuthenticatedException
+import dev.volodymyr.user.exceptions.InvalidCredentialsException
 import dev.volodymyr.user.services.UserService
 
 import play.api.libs.json.JsValue
@@ -9,7 +9,6 @@ import play.api.mvc._
 
 import javax.inject._
 import scala.concurrent.{ExecutionContext, Future}
-import scala.util.{Failure, Success}
 
 @Singleton
 class UserController @Inject() (val controllerComponents: ControllerComponents,
@@ -22,7 +21,7 @@ class UserController @Inject() (val controllerComponents: ControllerComponents,
       userService.login(loginDto)
         .map { token => Ok(token) }
         .recover {
-          case _: NotAuthenticatedException => Unauthorized
+          case _: InvalidCredentialsException => Unauthorized
           case _ => InternalServerError
         }
 
